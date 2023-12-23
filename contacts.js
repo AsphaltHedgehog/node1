@@ -15,7 +15,6 @@ async function getContactById(contactId) {
   return fs.readFile(contactsPath).then( async data => {
     const array = await JSON.parse(data);
     return array.find(contact => contact.id === contactId) || null;
-    
   }).catch(err => console.error(err.msg));
 }
 
@@ -29,7 +28,7 @@ async function removeContact(contactId) {
   } else {
     const deletedContact = array.splice(indexOfContact, 1);
     const newArray = array.filter(contact => contact.id !== contactId);
-    fs.writeFile(contactsPath, JSON.stringify(newArray));
+    fs.writeFile(contactsPath, JSON.stringify(newArray, null, 2));
     return deletedContact;
   }
 

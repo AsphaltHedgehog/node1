@@ -9,14 +9,14 @@ async function listContacts() {
     const array = JSON.parse(data);
     return array;
   }).catch(err => console.error(err.msg));
-}
+};
 
 async function getContactById(contactId) {
   return fs.readFile(contactsPath).then( async data => {
     const array = await JSON.parse(data);
     return array.find(contact => contact.id === contactId) || null;
   }).catch(err => console.error(err.msg));
-}
+};
 
 async function removeContact(contactId) {
   const array = JSON.parse(await fs.readFile(contactsPath));
@@ -25,14 +25,11 @@ async function removeContact(contactId) {
 
   if (indexOfContact === -1) {
     return null;
-  } else {
-    const deletedContact = array.splice(indexOfContact, 1);
-    const newArray = array.filter(contact => contact.id !== contactId);
-    fs.writeFile(contactsPath, JSON.stringify(newArray, null, 2));
-    return deletedContact;
-  }
-
-}
+  }; 
+  const newArray = array.slice(0, indexOfContact).concat(array.slice(indexOfContact + 1));
+  await fs.writeFile(contactsPath, JSON.stringify(newArray, null, 2));
+  return array[indexOfContact];
+};
 
 async function addContact(name, email, phone) {
   const array = JSON.parse(await fs.readFile(contactsPath));
@@ -40,19 +37,19 @@ async function addContact(name, email, phone) {
 
   if (name === '' || email === '' || phone === '') {
     return null;
-  } else {
-    contact = {
-      id: crypto.randomUUID().toString(),
-      name,
-      email,
-      phone
-    }
+  };
+  contact = {
+    id: crypto.randomUUID().toString(),
+    name,
+    email,
+    phone
+    
   };
   const newArray = array.concat(contact);
-  fs.writeFile(contactsPath, JSON.stringify(newArray, null, 2));
+  await fs.writeFile(contactsPath, JSON.stringify(newArray, null, 2));
 
   return contact;
-}
+};
 
 module.exports = {
   listContacts,
